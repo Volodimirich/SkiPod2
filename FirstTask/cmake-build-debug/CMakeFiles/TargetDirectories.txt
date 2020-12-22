@@ -1,0 +1,3 @@
+/home/voland/Workspace/SkiPod2/FirstTask/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/voland/Workspace/SkiPod2/FirstTask/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/voland/Workspace/SkiPod2/FirstTask/cmake-build-debug/CMakeFiles/FirstTask.dir
