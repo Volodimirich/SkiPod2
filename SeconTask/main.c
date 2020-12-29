@@ -18,28 +18,40 @@ int N;
 double *A;
 #define A(i, j) A[(i) * (N + 1) + (j)]
 double *X;
+bool reverse_sub = false;
 int proc_num, myrank;
 
 
 static void data_save()
 {
     if (myrank == 0) {
-        FILE* f = fopen("before_bcast.bin", "wb");
-
-
+        FILE* f = fopen("elimination.bin", "wb");
         fwrite(&A[0], sizeof(double),  (N-1)*N, f);
         fclose(f);
+
+        if (reverse_sub) {
+            FILE* f = fopen("reverse_sub.bin", "wb");
+            fwrite(&X[0], sizeof(double),  N, f);
+            fclose(f);
+        }
     }
     MPI_Barrier(main_comm);
 }
 
 static void data_load()
 {
-    FILE* f = fopen("before_bcast.bin", "rb");
+    FILE* f = fopen("elimination.bin", "rb");
 
     fread(&A[0], sizeof(double), (N-1)*N, f);
     fclose(f);
     printf("Proc %d\n", myrank);
+
+    if (reverse_sub) {
+        FILE* f = fopen("reverse_sub.bin", "wb");
+        fwrite(&X[0], sizeof(double),  N, f);
+        fclose(f);
+    }
+
     MPI_Barrier(main_comm);
 }
 
@@ -121,9 +133,9 @@ int main(int argc, char **argv)
     /* elimination */
 
     data_save();
-//    data_load();
-
     MPI_Barrier(main_comm);
+
+
     if (myrank == 0)
         raise(SIGKILL);
 
@@ -139,8 +151,15 @@ int main(int argc, char **argv)
             }
         }
     }
+    data_save();
+    MPI_Barrier(main_comm);
     /* reverse substitution */
     X[N - 1] = A(N - 1, N) / A(N - 1, N - 1);
+    reverse_sub = true;
+    data_save();
+    MPI_Barrier(main_comm);
+    if (myrank == 0)
+        raise(SIGKILL);
 
     for (j = N - 2; j >= 0; j--)
     {
@@ -150,6 +169,9 @@ int main(int argc, char **argv)
         X[j] = A(j, N) / A(j, j);
     }
     double time1 = MPI_Wtime();
+
+    data_save();
+    MPI_Barrier(main_comm);
 
     if (myrank == 0) {
         printf("Time in seconds=%gs\n", time1 - time0);
