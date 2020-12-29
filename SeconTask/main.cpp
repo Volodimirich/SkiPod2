@@ -1,12 +1,10 @@
 #include <math.h>
 #include <stdlib.h>
 #include <stdio.h>
+
 #include <sys/time.h>
 #include <mpi.h>
 #include "mpi-ext.h"
-#include <fstream>
-#include <iostream>
-#include <string>
 
 void prt1a(char *t1, double *v, int n, char *t2);
 
@@ -23,46 +21,55 @@ static void verbose_errhandler(MPI_Comm* pcomm, int* perr, ...)
 {
     MPI_Comm comm = *pcomm;
     int err = *perr;
+    char errstr[MPI_MAX_ERROR_STRING];
     int i, rank, size, nf, len, eclass;
     MPI_Group group_c, group_f;
     int *ranks_gc, *ranks_gf;
+
+    MPI_Error_class(err, &eclass);
+    if( MPIX_ERR_PROC_FAILED != eclass ) {
+        MPI_Abort(comm, err);
+    }
 
     MPI_Comm_rank(comm, &rank);
     MPI_Comm_size(comm, &size);
 
     MPIX_Comm_failure_ack(comm);
     MPIX_Comm_failure_get_acked(comm, &group_f);
+    MPI_Group_size(group_f, &nf);
+    MPI_Error_string(err, errstr, &len);
+    printf("Rank %d / %d: Notified of error %s. %d found dead: { ",
+           rank, size, errstr, nf);
+
+    ranks_gf = (int*)malloc(nf * sizeof(int));
+    ranks_gc = (int*)malloc(nf * sizeof(int));
+    MPI_Comm_group(comm, &group_c);
+    for(i = 0; i < nf; i++)
+        ranks_gf[i] = i;
+    MPI_Group_translate_ranks(group_f, nf, ranks_gf,
+                              group_c, ranks_gc);
+    for(i = 0; i < nf; i++)
+        printf("%d ", ranks_gc[i]);
+    printf("}\n");
+
 }
 
-static void data_save(int rank)
+static void data_save()
 {
-    std::ofstream out;
-    out.open("BeforeBcast" + std::to_string(rank) + ".txt");
-    int i, j, k;
-    for (i = 0; i <= N - 1; i++) {
-        for (j = 0; j <= N; j++)
-            out << A(i, j);
-        out << std::endl;
+    if (myrank == 0) {
+        FILE* f = fopen("before_bcast.txt", "w");
+        fwrite(&A[0], sizeof(double), 1, f);
+        fclose(f);
     }
-    out.close();
+//    MPI_Barrier(MPI_COMM_WORLD);
 }
 
-static void data_load(int rank)
+static void data_load()
 {
-    std::fstream in;
-    int i,j;
-    std::string line;
-    i = j = 0;
-    in.open("BeforeBcast" + std::to_string(rank) + ".txt");
-    while (getline(in, line)) {
-        for (auto &el: line)
-            A(i,j) = el;
-        i++;
-        j = 0;
-    }
-    in.close();
-
-
+    FILE* f = fopen("before_bcast", "r");
+    fread(&A(0,0), sizeof(double), (N-1)*N, f);
+    fclose(f);
+    MPI_Barrier(MPI_COMM_WORLD);
 }
 
 
@@ -75,6 +82,10 @@ int main(int argc, char **argv)
     MPI_Errhandler errh;
     MPI_Comm_create_errhandler(verbose_errhandler, &errh);
     MPI_Comm_set_errhandler(MPI_COMM_WORLD, errh);
+
+//    MPI_Barrier(MPI_COMM_WORLD);
+//    if (myrank == 0)
+//        throw;
 
     int i, j, k;
     N = atoi(argv[1]);
@@ -95,8 +106,8 @@ int main(int argc, char **argv)
     double time0 = MPI_Wtime();
     /* elimination */
 
-    data_save(myrank);
-    data_load(myrank);
+    data_save();
+//    data_load();
 
     for (i = 0; i < N - 1; i++)
     {
