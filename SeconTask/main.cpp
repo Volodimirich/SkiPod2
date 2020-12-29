@@ -3,7 +3,10 @@
 #include <stdio.h>
 #include <sys/time.h>
 #include <mpi.h>
+#include "mpi-ext.h"
 #include <fstream>
+#include <iostream>
+#include <string>
 
 void prt1a(char *t1, double *v, int n, char *t2);
 
@@ -15,9 +18,20 @@ double *A;
 double *X;
 int proc_num, myrank;
 
-static void verbose_errhandler(MPI_Comm* comm, int* err, ...)
+
+static void verbose_errhandler(MPI_Comm* pcomm, int* perr, ...)
 {
-    printf("!");
+    MPI_Comm comm = *pcomm;
+    int err = *perr;
+    int i, rank, size, nf, len, eclass;
+    MPI_Group group_c, group_f;
+    int *ranks_gc, *ranks_gf;
+
+    MPI_Comm_rank(comm, &rank);
+    MPI_Comm_size(comm, &size);
+
+    MPIX_Comm_failure_ack(comm);
+    MPIX_Comm_failure_get_acked(comm, &group_f);
 }
 
 static void data_save(int rank)
@@ -25,22 +39,31 @@ static void data_save(int rank)
     std::ofstream out;
     out.open("BeforeBcast" + std::to_string(rank) + ".txt");
     int i, j, k;
-    for (i = 0; i <= N - 1; i++)
+    for (i = 0; i <= N - 1; i++) {
         for (j = 0; j <= N; j++)
-            out << A(i,j);
+            out << A(i, j);
         out << std::endl;
+    }
     out.close();
 }
 
-//static void data_load(int rank)
-//{
-//    std::ofstream in;
-//    in.open("BeforeBcast" + std::to_string(rank) + ".txt");
-//    int i,j;
-//    for (i =0; i <= N - 1; i++)
-//        for (j = 0; j <= N; j++)
-//            in >> A(i,j);
-//}
+static void data_load(int rank)
+{
+    std::fstream in;
+    int i,j;
+    std::string line;
+    i = j = 0;
+    in.open("BeforeBcast" + std::to_string(rank) + ".txt");
+    while (getline(in, line)) {
+        for (auto &el: line)
+            A(i,j) = el;
+        i++;
+        j = 0;
+    }
+    in.close();
+
+
+}
 
 
 int main(int argc, char **argv)
@@ -73,6 +96,7 @@ int main(int argc, char **argv)
     /* elimination */
 
     data_save(myrank);
+    data_load(myrank);
 
     for (i = 0; i < N - 1; i++)
     {

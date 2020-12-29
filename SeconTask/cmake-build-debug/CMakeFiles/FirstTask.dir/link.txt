@@ -1,1 +1,0 @@
-mpicxx  -g   CMakeFiles/FirstTask.dir/main.cpp.o  -o FirstTask 
