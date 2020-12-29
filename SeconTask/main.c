@@ -19,6 +19,7 @@ double *A;
 #define A(i, j) A[(i) * (N + 1) + (j)]
 double *X;
 bool reverse_sub = false;
+bool err_happens = false;
 int proc_num, myrank;
 
 
@@ -91,14 +92,13 @@ static void verbose_errhandler(MPI_Comm* pcomm, int* perr, ...)
     for(i = 0; i < nf; i++)
         printf("%d ", ranks_gc[i]);
     printf("}\n");
-    printf("I am proc number - %d, before shrink\n", myrank);
 
     MPIX_Comm_shrink(comm, &main_comm);
     MPI_Comm_rank(main_comm, &myrank);
     MPI_Comm_size(main_comm, &proc_num);
-    printf("I am proc number - %d\n", myrank);
     data_load();
 
+    err_happens = true;
     free(ranks_gc);
     free(ranks_gf);
 }
@@ -114,6 +114,7 @@ int main(int argc, char **argv)
     MPI_Comm_set_errhandler(main_comm, errh);
 
     int i, j, k;
+    bool first_itter = false;
     N = atoi(argv[1]);
 
     /* create arrays */
@@ -139,44 +140,74 @@ int main(int argc, char **argv)
     if (myrank == 0)
         raise(SIGKILL);
 
-    for (i = 0; i < N - 1; i++)
-    {
-        MPI_Bcast(&A(i, i + 1), N - i, MPI_DOUBLE, i % proc_num, main_comm);
-        for (k = myrank; k <= N - 1; k += proc_num) {
-            if (k < i + 1) {
-                continue;
-            }
-            for (j = i + 1; j <= N; j++) {
-                A(k, j) = A(k, j) - A(k, i) * A(i, j) / A(i, i);
+    first_itter = true;
+    while (err_happens || first_itter) {
+        err_happens = false;
+        for (i = 0; i < N - 1; i++)
+        {
+            MPI_Bcast(&A(i, i + 1), N - i, MPI_DOUBLE, i % proc_num, main_comm);
+            for (k = myrank; k <= N - 1; k += proc_num) {
+                if (k < i + 1) {
+                    continue;
+                }
+                for (j = i + 1; j <= N; j++) {
+                    A(k, j) = A(k, j) - A(k, i) * A(i, j) / A(i, i);
+                }
             }
         }
+        first_itter = false;
+        if (!err_happens)
+            MPI_Barrier(main_comm);
+
     }
     data_save();
     MPI_Barrier(main_comm);
     /* reverse substitution */
-    X[N - 1] = A(N - 1, N) / A(N - 1, N - 1);
-    reverse_sub = true;
+
+    first_itter = true;
+    while (err_happens || first_itter) {
+        err_happens = false;
+
+        X[N - 1] = A(N - 1, N) / A(N - 1, N - 1);
+
+        first_itter = false;
+        if (!err_happens)
+            MPI_Barrier(main_comm);
+    }
     data_save();
     MPI_Barrier(main_comm);
+    reverse_sub = true;
+
     if (myrank == 0)
         raise(SIGKILL);
 
-    for (j = N - 2; j >= 0; j--)
-    {
-        for (k = myrank; k <= j; k += proc_num)
-            A(k, N) = A(k, N) - A(k, j + 1) * X[j + 1];
-        MPI_Bcast(&A(j, N), 1, MPI_DOUBLE, j % proc_num, main_comm);
-        X[j] = A(j, N) / A(j, j);
+
+    first_itter = true;
+    while (err_happens || first_itter) {
+        err_happens = false;
+
+        for (j = N - 2; j >= 0; j--) {
+            for (k = myrank; k <= j; k += proc_num)
+                A(k, N) = A(k, N) - A(k, j + 1) * X[j + 1];
+            MPI_Bcast(&A(j, N), 1, MPI_DOUBLE, j % proc_num, main_comm);
+            X[j] = A(j, N) / A(j, j);
+        }
+
+        first_itter = false;
+        if (!err_happens)
+            MPI_Barrier(main_comm);
     }
-    double time1 = MPI_Wtime();
 
     data_save();
     MPI_Barrier(main_comm);
+
+    double time1 = MPI_Wtime();
 
     if (myrank == 0) {
         printf("Time in seconds=%gs\n", time1 - time0);
         prt1a("X=(", X, N > 9 ? 9 : N, "...)\n");
     }
+
     free(A);
     free(X);
     printf("Final_proc_num - %d\n", proc_num );
