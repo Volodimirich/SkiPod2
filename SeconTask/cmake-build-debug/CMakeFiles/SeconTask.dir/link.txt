@@ -1,0 +1,1 @@
+/usr/bin/c++  -g   CMakeFiles/SeconTask.dir/main.cpp.o  -o SeconTask 
