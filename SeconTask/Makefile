@@ -1,5 +1,5 @@
 local_build:
-	mpicc -oa -g main.cpp
+	mpicc -oa -g main.c
 
 clean:
 	rm -f ./*_res
