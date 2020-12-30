@@ -73,7 +73,8 @@ CMAKE_BINARY_DIR = /home/voland/Workspace/SkiPod2/FirstTask/cmake-build-debug
 # Directory level rules for the build root directory
 
 # The main recursive "all" target.
-all: CMakeFiles/FirstTask.dir/all
+all: CMakeFiles/Naive.dir/all
+all: CMakeFiles/Normal.dir/all
 
 .PHONY : all
 
@@ -83,36 +84,64 @@ preinstall:
 .PHONY : preinstall
 
 # The main recursive "clean" target.
-clean: CMakeFiles/FirstTask.dir/clean
+clean: CMakeFiles/Naive.dir/clean
+clean: CMakeFiles/Normal.dir/clean
 
 .PHONY : clean
 
 #=============================================================================
-# Target rules for target CMakeFiles/FirstTask.dir
+# Target rules for target CMakeFiles/Naive.dir
 
 # All Build rule for target.
-CMakeFiles/FirstTask.dir/all:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/FirstTask.dir/build.make CMakeFiles/FirstTask.dir/depend
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/FirstTask.dir/build.make CMakeFiles/FirstTask.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/voland/Workspace/SkiPod2/FirstTask/cmake-build-debug/CMakeFiles --progress-num=1,2 "Built target FirstTask"
-.PHONY : CMakeFiles/FirstTask.dir/all
+CMakeFiles/Naive.dir/all:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Naive.dir/build.make CMakeFiles/Naive.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Naive.dir/build.make CMakeFiles/Naive.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/voland/Workspace/SkiPod2/FirstTask/cmake-build-debug/CMakeFiles --progress-num=1,2 "Built target Naive"
+.PHONY : CMakeFiles/Naive.dir/all
 
 # Build rule for subdir invocation for target.
-CMakeFiles/FirstTask.dir/rule: cmake_check_build_system
+CMakeFiles/Naive.dir/rule: cmake_check_build_system
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/voland/Workspace/SkiPod2/FirstTask/cmake-build-debug/CMakeFiles 2
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/FirstTask.dir/all
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/Naive.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/voland/Workspace/SkiPod2/FirstTask/cmake-build-debug/CMakeFiles 0
-.PHONY : CMakeFiles/FirstTask.dir/rule
+.PHONY : CMakeFiles/Naive.dir/rule
 
 # Convenience name for target.
-FirstTask: CMakeFiles/FirstTask.dir/rule
+Naive: CMakeFiles/Naive.dir/rule
 
-.PHONY : FirstTask
+.PHONY : Naive
 
 # clean rule for target.
-CMakeFiles/FirstTask.dir/clean:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/FirstTask.dir/build.make CMakeFiles/FirstTask.dir/clean
-.PHONY : CMakeFiles/FirstTask.dir/clean
+CMakeFiles/Naive.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Naive.dir/build.make CMakeFiles/Naive.dir/clean
+.PHONY : CMakeFiles/Naive.dir/clean
+
+#=============================================================================
+# Target rules for target CMakeFiles/Normal.dir
+
+# All Build rule for target.
+CMakeFiles/Normal.dir/all:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Normal.dir/build.make CMakeFiles/Normal.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Normal.dir/build.make CMakeFiles/Normal.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/voland/Workspace/SkiPod2/FirstTask/cmake-build-debug/CMakeFiles --progress-num=3,4 "Built target Normal"
+.PHONY : CMakeFiles/Normal.dir/all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/Normal.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/voland/Workspace/SkiPod2/FirstTask/cmake-build-debug/CMakeFiles 2
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/Normal.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/voland/Workspace/SkiPod2/FirstTask/cmake-build-debug/CMakeFiles 0
+.PHONY : CMakeFiles/Normal.dir/rule
+
+# Convenience name for target.
+Normal: CMakeFiles/Normal.dir/rule
+
+.PHONY : Normal
+
+# clean rule for target.
+CMakeFiles/Normal.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Normal.dir/build.make CMakeFiles/Normal.dir/clean
+.PHONY : CMakeFiles/Normal.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.

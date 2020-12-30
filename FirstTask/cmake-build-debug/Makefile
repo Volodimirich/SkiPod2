@@ -76,17 +76,6 @@ CMAKE_BINARY_DIR = /home/voland/Workspace/SkiPod2/FirstTask/cmake-build-debug
 #=============================================================================
 # Targets provided globally by CMake.
 
-# Special rule for the target edit_cache
-edit_cache:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
-	/home/voland/.local/share/JetBrains/Toolbox/apps/CLion/ch-0/202.6948.80/bin/cmake/linux/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
-.PHONY : edit_cache
-
-# Special rule for the target edit_cache
-edit_cache/fast: edit_cache
-
-.PHONY : edit_cache/fast
-
 # Special rule for the target rebuild_cache
 rebuild_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
@@ -97,6 +86,17 @@ rebuild_cache:
 rebuild_cache/fast: rebuild_cache
 
 .PHONY : rebuild_cache/fast
+
+# Special rule for the target edit_cache
+edit_cache:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
+	/home/voland/.local/share/JetBrains/Toolbox/apps/CLion/ch-0/202.6948.80/bin/cmake/linux/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
+.PHONY : edit_cache
+
+# Special rule for the target edit_cache
+edit_cache/fast: edit_cache
+
+.PHONY : edit_cache/fast
 
 # The main all target
 all: cmake_check_build_system
@@ -131,17 +131,30 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named FirstTask
+# Target rules for targets named Naive
 
 # Build rule for target.
-FirstTask: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 FirstTask
-.PHONY : FirstTask
+Naive: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 Naive
+.PHONY : Naive
 
 # fast build rule for target.
-FirstTask/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/FirstTask.dir/build.make CMakeFiles/FirstTask.dir/build
-.PHONY : FirstTask/fast
+Naive/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Naive.dir/build.make CMakeFiles/Naive.dir/build
+.PHONY : Naive/fast
+
+#=============================================================================
+# Target rules for targets named Normal
+
+# Build rule for target.
+Normal: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 Normal
+.PHONY : Normal
+
+# fast build rule for target.
+Normal/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Normal.dir/build.make CMakeFiles/Normal.dir/build
+.PHONY : Normal/fast
 
 main.o: main.cpp.o
 
@@ -149,7 +162,7 @@ main.o: main.cpp.o
 
 # target to build an object file
 main.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/FirstTask.dir/build.make CMakeFiles/FirstTask.dir/main.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Normal.dir/build.make CMakeFiles/Normal.dir/main.cpp.o
 .PHONY : main.cpp.o
 
 main.i: main.cpp.i
@@ -158,7 +171,7 @@ main.i: main.cpp.i
 
 # target to preprocess a source file
 main.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/FirstTask.dir/build.make CMakeFiles/FirstTask.dir/main.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Normal.dir/build.make CMakeFiles/Normal.dir/main.cpp.i
 .PHONY : main.cpp.i
 
 main.s: main.cpp.s
@@ -167,8 +180,35 @@ main.s: main.cpp.s
 
 # target to generate assembly for a file
 main.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/FirstTask.dir/build.make CMakeFiles/FirstTask.dir/main.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Normal.dir/build.make CMakeFiles/Normal.dir/main.cpp.s
 .PHONY : main.cpp.s
+
+naive.o: naive.cpp.o
+
+.PHONY : naive.o
+
+# target to build an object file
+naive.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Naive.dir/build.make CMakeFiles/Naive.dir/naive.cpp.o
+.PHONY : naive.cpp.o
+
+naive.i: naive.cpp.i
+
+.PHONY : naive.i
+
+# target to preprocess a source file
+naive.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Naive.dir/build.make CMakeFiles/Naive.dir/naive.cpp.i
+.PHONY : naive.cpp.i
+
+naive.s: naive.cpp.s
+
+.PHONY : naive.s
+
+# target to generate assembly for a file
+naive.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Naive.dir/build.make CMakeFiles/Naive.dir/naive.cpp.s
+.PHONY : naive.cpp.s
 
 # Help Target
 help:
@@ -178,10 +218,14 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
-	@echo "... FirstTask"
+	@echo "... Naive"
+	@echo "... Normal"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"
+	@echo "... naive.o"
+	@echo "... naive.i"
+	@echo "... naive.s"
 .PHONY : help
 
 

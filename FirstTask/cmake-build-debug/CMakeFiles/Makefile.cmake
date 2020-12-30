@@ -55,5 +55,6 @@ set(CMAKE_MAKEFILE_PRODUCTS
 
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
-  "CMakeFiles/FirstTask.dir/DependInfo.cmake"
+  "CMakeFiles/Naive.dir/DependInfo.cmake"
+  "CMakeFiles/Normal.dir/DependInfo.cmake"
   )
