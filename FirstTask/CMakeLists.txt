@@ -6,4 +6,5 @@ include_directories(${MPI_INCLUDE_PATH})
 SET(CMAKE_C_COMPILER mpicc)
 SET(CMAKE_CXX_COMPILER mpicxx)
 
-add_executable(FirstTask main.cpp)
+add_executable(Normal main.cpp)
+add_executable(Naive naive.cpp)
